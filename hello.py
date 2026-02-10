@@ -10,7 +10,7 @@ CARD_GAP = 24
 TABLE_BG = "#0f5132"
 PIP_X_FOR_COUNT = {
     1: [0.50],
-    2: [0.35, 0.65],
+    2: [0.34, 0.66],
 }
 
 # Row patterns are expressed top->bottom to match the reference deck.
@@ -21,25 +21,15 @@ ROW_LAYOUTS = {
     3: [(1, 0.28), (1, 0.50), (1, 0.72)],
     4: [(2, 0.31), (2, 0.69)],
     5: [(2, 0.31), (1, 0.50), (2, 0.69)],
-    6: [(2, 0.27), (2, 0.50), (2, 0.73)],
-    7: [(2, 0.21), (1, 0.31), (2, 0.47), (2, 0.67)],
-    8: [(2, 0.20), (1, 0.30), (2, 0.43), (1, 0.57), (2, 0.70)],
-    9: [(2, 0.20), (2, 0.34), (1, 0.50), (2, 0.66), (2, 0.80)],
+    6: [(2, 0.26), (2, 0.50), (2, 0.74)],
+    7: [(2, 0.22), (1, 0.32), (2, 0.48), (2, 0.68)],
+    8: [(2, 0.22), (1, 0.32), (2, 0.46), (1, 0.58), (2, 0.70)],
+    9: [(2, 0.22), (2, 0.34), (1, 0.50), (2, 0.66), (2, 0.78)],
     10: [(2, 0.20), (1, 0.30), (2, 0.40), (2, 0.60), (1, 0.70), (2, 0.80)],
 }
 
-PIP_SIZE_BY_RANK = {
-    1: 72,
-    2: 24,
-    3: 24,
-    4: 24,
-    5: 24,
-    6: 23,
-    7: 22,
-    8: 22,
-    9: 21,
-    10: 20,
-}
+ACE_PIP_SIZE = 72
+NON_ACE_PIP_SIZE = 24
 
 
 def build_pip_positions(rank):
@@ -103,7 +93,7 @@ def draw_card(canvas, x, y, rank, suit):
         anchor="nw",
         font=("Georgia", 12, "bold"),
     )
-    pip_size = PIP_SIZE_BY_RANK[rank]
+    pip_size = ACE_PIP_SIZE if rank == 1 else NON_ACE_PIP_SIZE
     for x_ratio, y_ratio in build_pip_positions(rank):
         px = x + CARD_WIDTH * x_ratio
         py = y + CARD_HEIGHT * y_ratio
