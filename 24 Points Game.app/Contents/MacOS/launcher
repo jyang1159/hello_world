@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_PATH="${APP_DIR}/Resources/hello.py"
+
+exec "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3" "${SCRIPT_PATH}"
