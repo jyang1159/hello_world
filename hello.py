@@ -142,11 +142,13 @@ def trim_outer_parentheses(expr):
     return expr
 
 
-def combine_pairs(a_value, a_expr, b_value, b_expr, positive_only):
+def combine_pairs(a_value, a_expr, b_value, b_expr, positive_only, integer_only):
     pairs = []
 
     def add_candidate(value, expr):
         if positive_only and value <= 0:
+            return
+        if integer_only and value.denominator != 1:
             return
         pairs.append((value, expr))
 
@@ -161,7 +163,7 @@ def combine_pairs(a_value, a_expr, b_value, b_expr, positive_only):
     return pairs
 
 
-def search_24(items, positive_only):
+def search_24(items, positive_only, integer_only):
     if len(items) == 1:
         return items[0][1] if items[0][0] == Fraction(24, 1) else None
 
@@ -171,9 +173,13 @@ def search_24(items, positive_only):
             b_value, b_expr = items[j]
             rest = [items[k] for k in range(len(items)) if k not in (i, j)]
             for new_value, new_expr in combine_pairs(
-                a_value, a_expr, b_value, b_expr, positive_only
+                a_value, a_expr, b_value, b_expr, positive_only, integer_only
             ):
-                found = search_24(rest + [(new_value, new_expr)], positive_only)
+                found = search_24(
+                    rest + [(new_value, new_expr)],
+                    positive_only,
+                    integer_only,
+                )
                 if found is not None:
                     return found
     return None
@@ -181,13 +187,21 @@ def search_24(items, positive_only):
 
 def solve_24(values):
     items = [(Fraction(value), str(value)) for value in values]
-    positive_result = search_24(items, positive_only=True)
-    if positive_result is not None:
-        return trim_outer_parentheses(positive_result), True
-
-    any_result = search_24(items, positive_only=False)
-    if any_result is not None:
-        return trim_outer_parentheses(any_result), False
+    # Preference order:
+    # 1) positive intermediates + integer intermediates
+    # 2) positive intermediates + fractional allowed
+    # 3) non-positive allowed + integer intermediates
+    # 4) any valid expression
+    modes = [
+        (True, True),
+        (True, False),
+        (False, True),
+        (False, False),
+    ]
+    for positive_only, integer_only in modes:
+        result = search_24(items, positive_only, integer_only)
+        if result is not None:
+            return trim_outer_parentheses(result), positive_only
 
     return None, False
 
